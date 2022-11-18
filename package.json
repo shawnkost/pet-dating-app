@@ -19,7 +19,7 @@
     ],
     "*.{json,js,jsx,html}": [
       "prettier --write",
-      "git add ."
+      "git add"
     ]
   },
   "dependencies": {
