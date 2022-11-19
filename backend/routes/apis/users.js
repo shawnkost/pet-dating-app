@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
 
 const auth = require('../../middleware/auth');
+const hashPassword = require('../../utils/hashPassword');
 const User = require('../../models/User');
 
 /* @route  POST api/users
@@ -40,26 +38,7 @@ router.post(
                         password,
                     });
 
-                    const payload = {
-                        user: {
-                            id: user.id,
-                        },
-                    };
-
-                    const salt = await bcrypt.genSalt(10);
-
-                    user.password = await bcrypt.hash(user.password, salt);
-                    await user.save();
-
-                    jwt.sign(
-                        payload,
-                        config.get('jwtSecret'),
-                        { expiresIn: 36000 },
-                        (err, token) => {
-                            if (err) throw err;
-                            return res.status(200).json({ token });
-                        }
-                    );
+                    await hashPassword(user, user.password);
                 }
             });
         } catch (err) {
@@ -89,9 +68,37 @@ router.put(
                 if (count > 0) {
                     const user = await User.findOne({ user: userId });
 
-                    user.email = email;
-                    await user.save();
-                    return res.json(user);
+                    await hashPassword(user, user.password);
+                } else {
+                    return res.status(404).send('User not found');
+                }
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send('Server error');
+        }
+    }
+);
+
+/* @route  PUT api/users/:user_id/password
+ * @desc   update user password
+ * @access public
+ */
+router.put(
+    '/:user_id/email',
+    [auth, check('password', 'Password is required').not().isEmpty()],
+    async (req, res) => {
+        const errors = validationResult(req);
+        const userId = req.params.user_id;
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        try {
+            User.countDocuments({ user: userId }, async (err, count) => {
+                if (count > 0) {
+                    const user = await User.findOne({ user: userId });
                 } else {
                     return res.status(404).send('User not found');
                 }
