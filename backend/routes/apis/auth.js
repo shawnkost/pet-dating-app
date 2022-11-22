@@ -9,7 +9,7 @@ const auth = require('../../middleware/auth');
 const User = require('../../models/User');
 
 /* @route  GET api/auth
- * @desc   test route
+ * @desc   get user token
  * @access public
  */
 router.get('/', auth, async (req, res) => {
