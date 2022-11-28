@@ -1,0 +1,38 @@
+{
+  "name": "pet-dating-app",
+  "version": "1.0.0",
+  "description": "A dating application for pets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write ./**/*.{js,jsx,css,md,json}",
+    "pre-commit": "lint-staged",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shawnkost/pet-dating-app.git"
+  },
+  "keywords": [],
+  "author": "Shawn Kost and Emily Sheng",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shawnkost/pet-dating-app/issues"
+  },
+  "homepage": "https://github.com/shawnkost/pet-dating-app#readme",
+  "devDependencies": {
+    "eslint": "^8.28.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.4",
+    "prettier": "^2.8.0"
+  }
+}
