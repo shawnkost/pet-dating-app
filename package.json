@@ -11,6 +11,15 @@
     "pre-commit": "lint-staged",
     "prepare": "husky install"
   },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix"
+    ],
+    "*.{json,js,jsx,html}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shawnkost/pet-dating-app.git"
