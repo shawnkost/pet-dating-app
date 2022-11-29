@@ -24,5 +24,6 @@
     "semi": ["error", "always"],
     "no-duplicate-imports": ["error"],
     "no-console": 0
-  }
+  },
+  "root": true
 }
