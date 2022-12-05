@@ -1,4 +1,3 @@
-const request = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -10,7 +9,17 @@ describe('Auth middleware route', () => {
     let connection;
     let db;
     let mockRequest;
-    let mockResponse = {};
+    const mockResponse = {
+        status: function (s) {
+            this.statusCode = s;
+            return this;
+        },
+        json: (d) => {
+            this.jsonMsg = d;
+            console.log('\n : ' + JSON.stringify(d));
+            return this;
+        },
+    };
     const mockNext = jest.fn();
     const mockVerify = jest.spyOn(jwt, 'verify');
 
@@ -47,28 +56,12 @@ describe('Auth middleware route', () => {
 
         expect(mockVerify.mock.calls.length).toBe(1);
         expect(mockNext.mock.calls.length).toBe(1);
-        expect(mockRequest).toEqual(
-            expect.objectContaining({
-                user: 'bar',
-            })
-        );
     });
 
     test('Do not authorize an empty token', () => {
         mockRequest = {
             header: () => {
                 return null;
-            },
-        };
-        mockResponse = {
-            status: function (s) {
-                this.statusCode = s;
-                return this;
-            },
-            json: (d) => {
-                this.jsonMsg = d;
-                console.log('\n : ' + JSON.stringify(d));
-                return this;
             },
         };
 
@@ -83,18 +76,6 @@ describe('Auth middleware route', () => {
         mockRequest = {
             header: () => {
                 return 'foo';
-            },
-        };
-
-        mockResponse = {
-            status: function (s) {
-                this.statusCode = s;
-                return this;
-            },
-            json: (d) => {
-                this.jsonMsg = d;
-                console.log('\n : ' + JSON.stringify(d));
-                return this;
             },
         };
 

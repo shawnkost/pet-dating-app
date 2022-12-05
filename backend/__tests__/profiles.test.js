@@ -2,7 +2,7 @@ const request = require('supertest');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 
-const profiles = require('../routes/apis/profiles');
+const profiles = require('../routes/profiles');
 
 describe('Profiles route', () => {
     let connection;

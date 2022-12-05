@@ -22,40 +22,38 @@ const authenticateUser = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
     try {
-        User.countDocuments({ email }, async (err, count) => {
-            if (count < 1) {
-                return res.status(400).json({
-                    errors: [{ msg: 'Invalid credentials' }],
-                });
-            } else {
-                let user = await User.findOne({ email });
-                const isMatch = await bcrypt.compare(password, user.password);
+        const user = await User.findOne({ email });
 
-                if (!isMatch) {
-                    return res
-                        .status(400)
-                        .json({ errors: [{ msg: 'Invalid credentials' }] });
-                }
+        if (user) {
+            const isMatch = await bcrypt.compare(password, user.password);
 
-                const payload = {
-                    user: {
-                        id: user.id,
-                    },
-                };
-
-                jwt.sign(
-                    payload,
-                    config.get('jwtSecret'),
-                    { expiresIn: 36000 },
-                    (err, token) => {
-                        if (err) throw err;
-                        return res.status(200).json({ token });
-                    }
-                );
+            if (!isMatch) {
+                return res
+                    .status(400)
+                    .json({ errors: [{ msg: 'Invalid credentials' }] });
             }
-        });
+
+            const payload = {
+                user: {
+                    id: user.id,
+                },
+            };
+
+            jwt.sign(
+                payload,
+                config.get('jwtSecret'),
+                { expiresIn: 36000 },
+                (err, token) => {
+                    if (err) throw err;
+                    return res.status(200).json({ token });
+                }
+            );
+        } else {
+            return res
+                .status(401)
+                .json({ errors: [{ msg: 'User not found' }] });
+        }
     } catch (err) {
         console.error(err.message);
         return res.status(500).send('Server error');
